@@ -9,6 +9,5 @@ $Param = @{
     SkipODT     = $true
 }
 
-Install-Module OSD -Force
 Start-OSDCloud @Param -ZTI
 Restart-Computer
