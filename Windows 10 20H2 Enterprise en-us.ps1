@@ -1,7 +1,7 @@
 ##############################################
 # :: Set Configuration ::
 ##############################################
-$Param - @{
+$Param = @{
     OSBuild     = "20H2"
     OSEdition   = "Enterprise"
     Culture     = "en-us"
@@ -10,5 +10,5 @@ $Param - @{
 }
 
 Install-Module OSD -Force
-Start-OSDCloud @Param
+Start-OSDCloud @Param -ZTI
 Restart-Computer
