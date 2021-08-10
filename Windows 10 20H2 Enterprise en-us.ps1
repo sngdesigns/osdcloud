@@ -10,5 +10,5 @@ $Param - @{
 }
 
 Install-Module OSD -Force
-Start-OSDCloud @Param -ZTI
+Start-OSDCloud @Param
 Restart-Computer
