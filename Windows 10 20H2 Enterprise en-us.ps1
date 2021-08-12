@@ -11,7 +11,17 @@ $Param = @{
 
 Start-OSDCloud @Param -ZTI
 
-Start-OOBEDeploy -AddNetFX3 -UpdateWindows
+$OOBEDeployJson = @'
+{
+    "UpdateWindows":  {
+                          "IsPresent":  true
+                      }
+}
+'@
+If (!(Test-Path "C:\ProgramData\OSDeploy")) {
+    New-Item "C:\ProgramData\OSDeploy" -ItemType Directory -Force | Out-Null
+}
+$OOBEDeployJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.OOBEDeploy.json" -Encoding ascii -Force
 
 $SetCommand = @'
 @echo off
@@ -38,5 +48,7 @@ REM start "Start-OOBEDeploy" PowerShell -NoL -C Start-OOBEDeploy -AddNetFX3 -Upd
 exit
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\OOBEDeploy.cmd" -Encoding ascii -Force
+
+Start-OOBEDeploy
 
 #Restart-Computer
