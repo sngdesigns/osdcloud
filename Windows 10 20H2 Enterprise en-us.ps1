@@ -48,5 +48,5 @@ if (-NOT (Test-Path $PantherUnattendPath)) {
 }
 $PantherUnattendPath = Join-Path $PantherUnattendPath 'Unattend.xml'
 $UnattendXml | Out-File -FilePath $PantherUnattendPath -Encoding utf8
-
+Use-WindowsUnattend -Path 'C:\' -UnattendPath $PantherUnattendPath -Verbose
 #Restart-Computer
