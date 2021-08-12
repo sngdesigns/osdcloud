@@ -31,11 +31,6 @@ $UnattendXml = @'
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
-                    <Description>OSDCloud Specialize</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
                     <Description>OSDCloud UpdateWindows</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Start-OOBEDeploy -UpdateWindows -Verbose</Path>
                 </RunSynchronousCommand>
