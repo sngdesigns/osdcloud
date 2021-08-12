@@ -66,7 +66,7 @@ $AuditUnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>3</Order>
                     <Description>Update Windows</Description>
-                    <Path>PowerShell -Command "Start-OOBEDeploy -AddNetFX3 -UpdateDrivers -UpdateWindows"</Path>
+                    <Path>PowerShell -Command "Start-OOBEDeploy -UpdateWindows"</Path>
                 </RunSynchronousCommand>
 
                 <RunSynchronousCommand wcm:action="add">
