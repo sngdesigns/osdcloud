@@ -43,6 +43,13 @@ $AuditUnattendXml = @'
     </settings>
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Reseal>
+                <Mode>Audit</Mode>
+            </Reseal>
+        </component>
+    </settings>
+    <settings pass="auditUser">
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
@@ -60,9 +67,31 @@ $AuditUnattendXml = @'
                     <Order>3</Order>
                     <Description>Update Windows</Description>
                     <Path>PowerShell -Command "Start-OOBEDeploy -UpdateWindows"</Path>
-                </RunSynchronousCommand>       
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>4</Order>
+                    <Description>Exit Audit</Description>
+                    <Path>PowerShell -Command "Use-WindowsUnattend -Path 'C:\' -UnattendPath 'C:\Windows\Panther\Unattend\UnattendOOBE.xml' -Verbose"</Path>
+                </RunSynchronousCommand>   
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>4</Order>
+                    <Description>Restart Computer</Description>
+                    <Path>PowerShell -Command "Restart-Computer"</Path>
+                </RunSynchronousCommand>        
             </RunSynchronous>
         </component>
+    </settings>
+</unattend>
+'@
+
+$AuditUnattendXml2 = @'
+<?xml version="1.0" encoding="utf-8"?>
+<unattend xmlns="urn:schemas-microsoft-com:unattend">
+    <settings pass="oobeSystem">
+        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+            <Reseal>
+                <Mode>OOBE</Mode>
+            </Reseal>
         </component>
     </settings>
 </unattend>
@@ -77,4 +106,7 @@ if (-NOT (Test-Path $PantherUnattendPath)) {
 $AuditUnattendPath = Join-Path $PantherUnattendPath 'Unattend.xml'
 $AuditUnattendXml | Out-File -FilePath $AuditUnattendPath -Encoding utf8
 Use-WindowsUnattend -Path 'C:\' -UnattendPath $AuditUnattendPath -Verbose
+
+$AuditUnattendPath2 = Join-Path $PantherUnattendPath 'UnattendOOBE.xml'
+$AuditUnattendXml2 | Out-File -FilePath $AuditUnattendPath2 -Encoding utf8
 Restart-Computer
