@@ -1,8 +1,10 @@
 ##############################################
 # :: Set Configuration ::
 ##############################################
+$Global:OSBuild = "20H2"
+
 $Params = @{
-    OSBuild     = "20H2"
+    OSBuild     = $Global:OSBuild
     OSEdition   = "Enterprise"
     Culture     = "en-us"
     SkipAutopilot = $true
@@ -29,9 +31,9 @@ if (!(Test-Path $env:systemroot\SysWOW64\wusa.exe)){
   
 foreach ($Update in $Updates)
   {
-    Write-Information "Starting Update $Qty - `r`n$Update"
+    Write-Host "Starting Update $Qty - `r`n$Update"
     Start-Process -FilePath $Wus -ArgumentList ($Update.FullName, '/quiet', '/norestart') -Wait
-    Write-Information "Finished Update $Qty"
+    Write-Host "Finished Update $Qty"
   }  
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
@@ -39,9 +41,9 @@ $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding asci
 #================================================
 #   Download latest Windows update from Microsoft
 #================================================
-Save-MsUpCatUpdate -OS 'Windows 10' -Arch x64 -Build 20H2 -Category SSU -Latest -DestinationDirectory C:\MSCatUpdates
-Save-MsUpCatUpdate -OS 'Windows 10' -Arch x64 -Build 20H2 -Category DotNetCU -Latest -DestinationDirectory C:\MSCatUpdates
-Save-MsUpCatUpdate -OS 'Windows 10' -Arch x64 -Build 20H2 -Category LCU -Latest -DestinationDirectory C:\MSCatUpdates
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category SSU -Latest -DestinationDirectory C:\MSCatUpdates
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSCatUpdates
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSCatUpdates
 
 #================================================
 #   PostOS
@@ -58,9 +60,9 @@ $UnattendXml = @'
                     <Path>Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
+                    <Order>2</Order>
                     <Description>Install Windows Update</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -File 'C:\Windows\Install-Updates.ps1'</Path>
+                    <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>
             </RunSynchronous>
         </component>
@@ -70,7 +72,7 @@ $UnattendXml = @'
 #================================================
 #   Set Unattend.xml
 #================================================
-$PantherUnattendPath = 'C:\Windows\Panther\Unattend'
+$PantherUnattendPath = 'C:\Windows\Panther\'
 if (-NOT (Test-Path $PantherUnattendPath)) {
     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
 }
