@@ -43,13 +43,6 @@ $AuditUnattendXml = @'
     </settings>
     <settings pass="oobeSystem">
         <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <Reseal>
-                <Mode>Audit</Mode>
-            </Reseal>
-        </component>
-    </settings>
-    <settings pass="auditUser">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
@@ -67,19 +60,9 @@ $AuditUnattendXml = @'
                     <Order>3</Order>
                     <Description>Update Windows</Description>
                     <Path>PowerShell -Command "Start-OOBEDeploy -UpdateWindows"</Path>
-                </RunSynchronousCommand>
-
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
-                    <Description>Syspre</Description>
-                    <Path>PowerShell -Command "Start-Process -FilePath C:\Windows\System32\Sysprep\Sysprep.exe -ArgumentList '/generalize /oobe /reboot /quiet'"</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>5</Order>
-                    <Description>Restart Computer</Description>
-                    <Path>PowerShell -Command "Restart-Computer"</Path>
-                </RunSynchronousCommand>        
+                </RunSynchronousCommand>       
             </RunSynchronous>
+        </component>
         </component>
     </settings>
 </unattend>
