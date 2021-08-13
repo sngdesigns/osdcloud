@@ -71,7 +71,7 @@ $AuditUnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>4</Order>
                     <Description>Exit Audit</Description>
-                    <Path>PowerShell -Command "Use-WindowsUnattend -Path 'C:\' -UnattendPath 'C:\Windows\Panther\Unattend\UnattendOOBE.xml' -Verbose"</Path>
+                    <Path>PowerShell -Command "sysprep.exe /generalize /oobe /reboot /quiet /unattend:C:\Windows\Panther\Unattend\UnattendOOBE.xml"</Path>
                 </RunSynchronousCommand>   
                 <RunSynchronousCommand wcm:action="add">
                     <Order>4</Order>
