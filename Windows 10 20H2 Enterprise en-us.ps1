@@ -7,106 +7,36 @@ $Param = @{
     Culture     = "en-us"
     SkipAutopilot = $true
     SkipODT     = $true
+    ZTI         = $true
 }
 
-Start-OSDCloud @Param -ZTI
+Start-OSDCloud @Param
 
-$OOBEDeployJson = @'
-{
-    "UpdateWindows":  {
-                          "IsPresent":  true
-                      }
+$Params = @{
+    UpdateWindows = $true
 }
+Start-OOBEDeploy @Params
+#================================================
+#   WinPE PostOS
+#   Set OOBEDeploy CMD.ps1
+#================================================
+$SetCommand = @'
+@echo off
+:: Set the PowerShell Execution Policy
+PowerShell -NoL -Com Set-ExecutionPolicy RemoteSigned -Force
+:: Add PowerShell Scripts to the Path
+set path=%path%;C:\Program Files\WindowsPowerShell\Scripts
+:: Open and Minimize a PowerShell instance just in case
+start PowerShell -NoL -W Mi
+:: Install the latest OSD Module
+start "Install-Module OSD" /wait PowerShell -NoL -C Install-Module OSD -Force -Verbose
+:: Start-OOBEDeploy
+:: There are multiple example lines. Make sure only one is uncommented
+:: The next line assumes that you have a configuration saved in C:\ProgramData\OSDeploy\OSDeploy.OOBEDeploy.json
+start "Start-OOBEDeploy" PowerShell -NoL -C Start-OOBEDeploy
+:: The next line assumes that you do not have a configuration saved in or want to ensure that these are applied
+start "Start-OOBEDeploy" PowerShell -NoL -C Start-OOBEDeploy -UpdateWindows
+exit
 '@
-If (!(Test-Path "C:\ProgramData\OSDeploy")) {
-    New-Item "C:\ProgramData\OSDeploy" -ItemType Directory -Force | Out-Null
-}
-$OOBEDeployJson | Out-File -FilePath "C:\ProgramData\OSDeploy\OSDeploy.OOBEDeploy.json" -Encoding ascii -Force
-
-#================================================
-#   PostOS
-#   Audit Mode OOBEDeploy
-#================================================
-$AuditUnattendXml = @'
-<?xml version="1.0" encoding="utf-8"?>
-<unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <settings pass="specialize" wasPassProcessed="true">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Description>OSDCloud Specialize</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
-                </RunSynchronousCommand>
-            </RunSynchronous>
-        </component>
-    </settings>
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <Reseal>
-                <Mode>Audit</Mode>
-            </Reseal>
-        </component>
-    </settings>
-    <settings pass="auditUser">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <RunSynchronous>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <Description>Setting PowerShell ExecutionPolicy</Description>
-                    <Path>PowerShell -WindowStyle Hidden -Command "Set-ExecutionPolicy RemoteSigned -Force"</Path>
-                </RunSynchronousCommand>
-
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Description>Update OSD Module</Description>
-                    <Path>PowerShell -Command "Install-Module OSD -Force"</Path>
-                </RunSynchronousCommand>
-
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
-                    <Description>Update Windows</Description>
-                    <Path>PowerShell -Command "Start-OOBEDeploy -UpdateWindows"</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
-                    <Description>Exit Audit</Description>
-                    <Path>PowerShell -Command "sysprep.exe /generalize /oobe /reboot /quiet /unattend:C:\Windows\Panther\Unattend\UnattendOOBE.xml"</Path>
-                </RunSynchronousCommand>   
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
-                    <Description>Restart Computer</Description>
-                    <Path>PowerShell -Command "Restart-Computer"</Path>
-                </RunSynchronousCommand>        
-            </RunSynchronous>
-        </component>
-    </settings>
-</unattend>
-'@
-
-$AuditUnattendXml2 = @'
-<?xml version="1.0" encoding="utf-8"?>
-<unattend xmlns="urn:schemas-microsoft-com:unattend">
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <Reseal>
-                <Mode>OOBE</Mode>
-            </Reseal>
-        </component>
-    </settings>
-</unattend>
-'@
-#================================================
-#   Set Unattend.xml
-#================================================
-$PantherUnattendPath = 'C:\Windows\Panther\Unattend'
-if (-NOT (Test-Path $PantherUnattendPath)) {
-    New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
-}
-$AuditUnattendPath = Join-Path $PantherUnattendPath 'Unattend.xml'
-$AuditUnattendXml | Out-File -FilePath $AuditUnattendPath -Encoding utf8
-Use-WindowsUnattend -Path 'C:\' -UnattendPath $AuditUnattendPath -Verbose
-
-$AuditUnattendPath2 = Join-Path $PantherUnattendPath 'UnattendOOBE.xml'
-$AuditUnattendXml2 | Out-File -FilePath $AuditUnattendPath2 -Encoding utf8
-Restart-Computer
+$SetCommand | Out-File -FilePath "C:\Windows\OOBEDeploy.cmd" -Encoding ascii -Force
+#Restart-Computer
