@@ -56,7 +56,6 @@ foreach ($Update in $Updates)
     Write-Host "Installing $Update"
     Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
   }  
-  pause
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
 
