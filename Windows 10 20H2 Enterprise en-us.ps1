@@ -76,8 +76,8 @@ $PantherUnattendPath = 'C:\Windows\Panther\Unattend'
 if (-NOT (Test-Path $PantherUnattendPath)) {
     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
 }
-$UnattendPath = Join-Path $PantherUnattendPath 'Unattend.xml'
+$UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
 $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
-Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
+#Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
 
 #Restart-Computer
