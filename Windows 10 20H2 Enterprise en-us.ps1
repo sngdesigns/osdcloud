@@ -22,18 +22,18 @@ $Location = "$env:SystemDrive\MSCatUpdates"
 $Updates = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 $Qty = $Updates.count
 
-if (!(Test-Path $env:systemroot\SysWOW64\wusa.exe)){
-    $Wus = "$env:systemroot\System32\wusa.exe"
-  }
-  else {
-    $Wus = "$env:systemroot\SysWOW64\wusa.exe"
-  }
-  
+cd $Location
 foreach ($Update in $Updates)
   {
-    Write-Host "Starting Update $Qty - `r`n$Update"
-    Start-Process -FilePath $Wus -ArgumentList ($Update.FullName, '/quiet', '/norestart') -Wait
-    Write-Host "Finished Update $Qty"
+    Write-Host "Expanding $Update"
+    expand -f:* $Update.FullName .
+  }  
+
+$Updates = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+foreach ($Update in $Updates)
+  {
+    Write-Host "Expanding $Update"
+    Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
   }  
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
@@ -66,23 +66,13 @@ $UnattendXml = @'
                 </RunSynchronousCommand>
             </RunSynchronous>
         </component>
-    </settings>
-    <settings pass="oobeSystem">
-        <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <FirstLogonCommands>
-                <SynchronousCommand wcm:action="add">
-                    <Order>1</Order>
-                    <CommandLine>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</CommandLine>
-                </SynchronousCommand>
-            </FirstLogonCommands>
-        </component>
-    </settings>    
+    </settings> 
 </unattend>
 '@
 #================================================
 #   Set Unattend.xml
 #================================================
-$PantherUnattendPath = 'C:\Windows\Panther\'
+$PantherUnattendPath = 'C:\Windows\Panther\Unattend'
 if (-NOT (Test-Path $PantherUnattendPath)) {
     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
 }
