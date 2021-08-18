@@ -24,10 +24,10 @@ Start-OSDCloud @Params
 
 #================================================================================================
 #   WinPE PostOS
-#   Set Install-WindowsUpdate.ps1
+#   Set Install-Updates.ps1
 #================================================================================================
 $SetCommand = @'
-Function Install-MSUpdate{
+Function Install-MSUpdates{
     param (
         $LocationLCU = 'C:\MSUpdates\LCU',
 
@@ -44,7 +44,7 @@ Function Install-MSUpdate{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesLCU = (Get-ChildItem $UpdatesLCU | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesLCU)
     {
         Write-Host "Installing $Update"
@@ -74,8 +74,8 @@ $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding asci
 #   Download latest Windows update from Microsoft
 #================================================================================================
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category SSU -Latest -DestinationDirectory C:\MSCatUpdates
-Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSCatUpdates\DotNet
-Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSCatUpdates\LCU
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
 
 #================================================================================================
 #   PostOS
