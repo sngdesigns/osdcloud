@@ -44,7 +44,7 @@ Function Install-MSUpdate{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesLCU = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $UpdatesLCU | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesLCU)
     {
         Write-Host "Installing $Update"
@@ -58,7 +58,7 @@ Function Install-MSUpdate{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesDotNet = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesDotNet)
     {
         Write-Host "Installing $Update"
