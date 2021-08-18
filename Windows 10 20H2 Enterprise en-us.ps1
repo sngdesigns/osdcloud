@@ -1,6 +1,14 @@
-##############################################
-# :: Set Configuration ::
-##############################################
+#================================================================================================
+#   Author:     stng@informatica.com
+#   Date:       August 17, 2021
+#   Purpose:    This script set the needed configuration to install the base image 
+#               for 20H2 and also install drivers and Windows updates to latest as needed.
+#================================================================================================
+
+#================================================================================================
+#   Set Configuration
+#   DO NOT MODIFY BELOW UNLESS INSTRUCTED
+#================================================================================================
 $Global:OSBuild = "20H2"
 
 $Params = @{
@@ -14,43 +22,66 @@ $Params = @{
 
 Start-OSDCloud @Params
 
-#================================================
+#================================================================================================
 #   WinPE PostOS
 #   Set Install-WindowsUpdate.ps1
-#================================================
+#================================================================================================
 $SetCommand = @'
-$Location = "$env:SystemDrive\MSCatUpdates"
-$Updates = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
-$Qty = $Updates.count
+Function Install-MSUpdate{
+    param (
+        $LocationLCU = 'C:\MSUpdates\LCU',
 
-cd $Location
-foreach ($Update in $Updates)
-  {
-    Write-Host "Expanding $Update"
-    expand -f:* $Update.FullName .
-  }  
+        $LocationDotNet = 'C:\MSUpdates\DotNet'
+    )
 
-$Updates = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
-foreach ($Update in $Updates)
-  {
-    Write-Host "Installing $Update"
-    Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
-  }  
+    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+
+    Set-Location -Path $LocationLCU
+    foreach ($Update in $UpdatesLCU)
+    {
+        Write-Host "Expanding $Update"
+        expand -f:* $Update.FullName .
+    }  
+
+    $UpdatesLCU = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    foreach ($Update in $UpdatesLCU)
+    {
+        Write-Host "Installing $Update"
+        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+    }  
+
+    Set-Location -Path $LocationDotNet
+    foreach ($Update in $UpdatesDotNet)
+    {
+        Write-Host "Expanding $Update"
+        expand -f:* $Update.FullName .
+    }  
+
+    $UpdatesDotNet = (Get-ChildItem $Location | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    foreach ($Update in $UpdatesDotNet)
+    {
+        Write-Host "Installing $Update"
+        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+    }     
+}
+
+Install-MSUpdates
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
 
-#================================================
+#================================================================================================
 #   Download latest Windows update from Microsoft
-#================================================
+#================================================================================================
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category SSU -Latest -DestinationDirectory C:\MSCatUpdates
-#Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSCatUpdates
-Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSCatUpdates
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSCatUpdates\DotNet
+Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSCatUpdates\LCU
 
-#================================================
+#================================================================================================
 #   PostOS
 #   Installing driver and update Microsoft patches
 #   during specialize phase
-#================================================
+#================================================================================================
 $UnattendXml = @'
 <?xml version='1.0' encoding='utf-8'?>
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
@@ -72,9 +103,9 @@ $UnattendXml = @'
     </settings>    
 </unattend>
 '@
-#================================================
+#================================================================================================
 #   Set Unattend.xml
-#================================================
+#================================================================================================
 $PantherUnattendPath = 'C:\Windows\Panther'
 if (-NOT (Test-Path $PantherUnattendPath)) {
     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
@@ -83,8 +114,8 @@ $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
 $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
 #Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
 
-#================================================
+#================================================================================================
 #   WinPE PostOS
 #   Restart Computer
-#================================================
+#================================================================================================
 Restart-Computer
