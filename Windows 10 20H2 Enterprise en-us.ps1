@@ -67,6 +67,10 @@ Function Install-MSUpdates{
 }
 
 Install-MSUpdates
+
+# Cleanup
+Remove-Item -Path C:\MSUpdates -Recurse -ErrorAction SilentlyContinue
+Remove-Item -Path C:\OSDCloud -Recurse -ErrorAction SilentlyContinue
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
 
@@ -96,12 +100,7 @@ $UnattendXml = @'
                     <Order>2</Order>
                     <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
-                    <Description>Remove Windows Update Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
-                </RunSynchronousCommand>
+                </RunSynchronousCommand>              
             </RunSynchronous>
         </component>
     </settings>    
