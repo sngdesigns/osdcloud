@@ -97,6 +97,11 @@ $UnattendXml = @'
                     <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>3</Order>
+                    <Description>Remove Windows Update Files</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
+                </RunSynchronousCommand>
             </RunSynchronous>
         </component>
     </settings>    
