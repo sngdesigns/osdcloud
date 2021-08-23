@@ -106,7 +106,12 @@ $UnattendXml = @'
                     <Order>4</Order>
                     <Description>Remove OSDCloud Temp Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
-                </RunSynchronousCommand>                
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>5</Order>
+                    <Description>Remove Drivers Temp Files</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
+                </RunSynchronousCommand>                  
             </RunSynchronous>
         </component>
     </settings>    
