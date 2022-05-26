@@ -73,6 +73,11 @@ $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding asci
 #================================================================================================
 #   Download latest Windows update from Microsoft
 #================================================================================================
+
+# To bypass IE first launch
+New-Item "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main" -Force -EA SilentlyContinue | Out-Null
+New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Value 1 -PropertyType Dword -Force -EA SilentlyContinue | Out-Null
+
 Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
 Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
 
