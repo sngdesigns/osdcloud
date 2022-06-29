@@ -14,6 +14,7 @@ $Global:OSBuild = "21H2"
 $Params = @{
     OSBuild     = $Global:OSBuild
     OSEdition   = "Enterprise"
+    OSVersion   = "Windows 10"
     Culture     = "en-us"
     SkipAutopilot = $true
     SkipODT     = $true
