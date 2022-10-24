@@ -9,7 +9,7 @@
 #   DO NOT MODIFY BELOW UNLESS INSTRUCTED
 #================================================================================================
 $Global:OSBuild = "21H2"
-$Global:OSDCloudUnattend = $true
+#$Global:OSDCloudUnattend = $true
 
 $Params = @{
     OSBuild     = $Global:OSBuild
@@ -35,8 +35,8 @@ Function Install-MSUpdates{
         $LocationDotNet = 'C:\MSUpdates\DotNet'
     )
 
-    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
-    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
     Set-Location -Path $LocationLCU
     foreach ($Update in $UpdatesLCU)
@@ -45,7 +45,7 @@ Function Install-MSUpdates{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesLCU)
     {
         Write-Host "Installing $Update"
@@ -59,7 +59,7 @@ Function Install-MSUpdates{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesDotNet)
     {
         Write-Host "Installing $Update"
@@ -135,7 +135,11 @@ if (-NOT (Test-Path $PantherUnattendPath)) {
 }
 $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
 $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
-#Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
+
+Write-Verbose "Setting Unattend in Offline Registry"
+Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
+Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
+Invoke-Exe reg unload HKLM\TempSYSTEM
 
 #================================================================================================
 #   WinPE PostOS
