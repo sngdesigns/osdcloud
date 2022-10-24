@@ -120,7 +120,12 @@ $UnattendXml = @'
                     <Order>5</Order>
                     <Description>Remove Drivers Temp Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
-                </RunSynchronousCommand>                  
+                </RunSynchronousCommand>         
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>6</Order>
+                    <Description>Remove Provisioning Package</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
+                </RunSynchronousCommand>            
             </RunSynchronous>
         </component>
     </settings>    
