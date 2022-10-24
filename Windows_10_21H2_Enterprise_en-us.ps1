@@ -1,5 +1,4 @@
 #================================================================================================
-#   Author:     stng@informatica.com
 #   Date:       February 8, 2022
 #   Purpose:    This script set the needed configuration to install the base image 
 #               for 21H2 and also install drivers and Windows updates to latest as needed.
@@ -10,6 +9,7 @@
 #   DO NOT MODIFY BELOW UNLESS INSTRUCTED
 #================================================================================================
 $Global:OSBuild = "21H2"
+#$Global:OSDCloudUnattend = $true
 
 $Params = @{
     OSBuild     = $Global:OSBuild
@@ -35,8 +35,8 @@ Function Install-MSUpdates{
         $LocationDotNet = 'C:\MSUpdates\DotNet'
     )
 
-    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
-    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
     Set-Location -Path $LocationLCU
     foreach ($Update in $UpdatesLCU)
@@ -45,7 +45,7 @@ Function Install-MSUpdates{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesLCU = (Get-ChildItem $LocationLCU | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesLCU)
     {
         Write-Host "Installing $Update"
@@ -59,7 +59,7 @@ Function Install-MSUpdates{
         expand -f:* $Update.FullName .
     }  
 
-    $UpdatesDotNet = (Get-ChildItem $LocationDotNet | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
+    $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesDotNet)
     {
         Write-Host "Installing $Update"
@@ -81,6 +81,9 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
 Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
+
+# Use old unattended method instead of Provisioning ppkg to install drivers
+Set-OSDCloudUnattendSpecialize
 
 #================================================================================================
 #   PostOS
@@ -132,7 +135,11 @@ if (-NOT (Test-Path $PantherUnattendPath)) {
 }
 $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
 $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
-#Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
+
+Write-Verbose "Setting Unattend in Offline Registry"
+Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
+Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
+Invoke-Exe reg unload HKLM\TempSYSTEM
 
 #================================================================================================
 #   WinPE PostOS
