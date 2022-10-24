@@ -1,5 +1,4 @@
 #================================================================================================
-#   Author:     stng@informatica.com
 #   Date:       February 8, 2022
 #   Purpose:    This script set the needed configuration to install the base image 
 #               for 21H2 and also install drivers and Windows updates to latest as needed.
@@ -10,6 +9,7 @@
 #   DO NOT MODIFY BELOW UNLESS INSTRUCTED
 #================================================================================================
 $Global:OSBuild = "21H2"
+$Global:OSDCloudUnattend = $true
 
 $Params = @{
     OSBuild     = $Global:OSBuild
@@ -82,6 +82,9 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
 Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
 
+# Use old unattended method instead of Provisioning ppkg to install drivers
+Set-OSDCloudUnattendSpecialize
+
 #================================================================================================
 #   PostOS
 #   Installing driver and update Microsoft patches
@@ -132,7 +135,7 @@ if (-NOT (Test-Path $PantherUnattendPath)) {
 }
 $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
 $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
-Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
+#Use-WindowsUnattend -Path 'C:\' -UnattendPath $UnattendPath -Verbose
 
 #================================================================================================
 #   WinPE PostOS
