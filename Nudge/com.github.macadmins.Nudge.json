@@ -39,8 +39,6 @@
       "forceScreenShotIcon": false,
       "iconDarkPath": "/private/var/tmp/darkmode.png",
       "iconLightPath": "/private/var/tmp/lightmode.png",
-      "screenShotDarkPath": "/private/var/tmp/darkmode.png",
-      "screenShotLightPath": "/private/var/tmp/lightmode.png",
       "showDeferralCount": true,
       "simpleMode": false,
       "singleQuitButton": false,
