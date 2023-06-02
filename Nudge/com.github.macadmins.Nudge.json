@@ -1,8 +1,9 @@
 {
     "optionalFeatures": {
+      "acceptableApplicationBundleIDs": ["us.zoom.xos"],
       "acceptableCameraUsage": true,
       "acceptableScreenSharingUsage": true,
-      "aggressiveUserExperience": true,
+      "aggressiveUserExperience": false,
       "aggressiveUserFullScreenExperience": false,
       "asynchronousSoftwareUpdate": true,
       "attemptToFetchMajorUpgrade": true,
@@ -22,16 +23,7 @@
       }
     ],
     "userExperience": {
-      "allowedDeferrals": 100,
-      "allowedDeferralsUntilForcedSecondaryQuitButton": 0,
-      "approachingRefreshCycle": 6000,
-      "approachingWindowTime": 120,
-      "elapsedRefreshCycle": 300,
-      "initialRefreshCycle": 18000,
-      "maxRandomDelayInSeconds": 1200,
-      "noTimers": false,
-      "nudgeRefreshCycle": 60,
-      "randomDelay": false
+      "allowUserQuitDeferrals": false
     },
     "userInterface": {
       "fallbackLanguage": "en",
@@ -39,9 +31,9 @@
       "forceScreenShotIcon": false,
       "iconDarkPath": "/private/var/tmp/darkmode.png",
       "iconLightPath": "/private/var/tmp/lightmode.png",
-      "showDeferralCount": true,
+      "showDeferralCount": false,
       "simpleMode": false,
-      "singleQuitButton": false,
+      "singleQuitButton": true,
       "updateElements": [
         {
           "_language": "en",
