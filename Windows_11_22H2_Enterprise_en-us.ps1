@@ -44,7 +44,7 @@ Function Install-MSUpdates{
         Write-Host "Expanding $Update"
         expand -f:* $Update.FullName .
         Write-Host "Installing LCU"
-        Start-Process wusa.exe -ArgumentList 'C:\MSUpdates\LCU\$($Update.FullName) /quiet /norestart' -Wait
+        Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
     }  
 
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
@@ -87,7 +87,7 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
 # Download Windows 11 22H2 LCU - January 2024
-curl.exe -L -o "C:\MSupdates\LCU\$OSVersion $OSBuild-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a9f5de65-91c3-47e7-b987-0ba0468699b8/public/windows11.0-kb5034123-x64_d82c9af459245e90b5bf897f15a72cf810819f31.msu"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-22H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a9f5de65-91c3-47e7-b987-0ba0468699b8/public/windows11.0-kb5034123-x64_d82c9af459245e90b5bf897f15a72cf810819f31.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
