@@ -43,13 +43,14 @@ Function Install-MSUpdates{
     {
         Write-Host "Expanding $Update"
         expand -f:* $Update.FullName .
+        wusa.exe C:\MSUpdates\LCU\$($Update.FullName) /norestart
     }  
 
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesLCU)
     {
-        Write-Host "Installing $Update"
-        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        #Write-Host "Installing $Update"
+        #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }  
 
     Set-Location -Path $LocationDotNet
@@ -62,8 +63,8 @@ Function Install-MSUpdates{
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
     foreach ($Update in $UpdatesDotNet)
     {
-        Write-Host "Installing $Update"
-        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        #Write-Host "Installing $Update"
+        #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }     
 }
 
@@ -81,6 +82,8 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
 # Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 11" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
+
+New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
 # Download Windows 11 22H2 LCU - January 2024
 curl.exe -L -o "C:\MSupdates\LCU\$OSVersion $OSBuild-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a9f5de65-91c3-47e7-b987-0ba0468699b8/public/windows11.0-kb5034123-x64_d82c9af459245e90b5bf897f15a72cf810819f31.msu"
