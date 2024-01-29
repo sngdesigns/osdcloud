@@ -43,7 +43,8 @@ Function Install-MSUpdates{
     {
         Write-Host "Expanding $Update"
         expand -f:* $Update.FullName .
-        wusa.exe C:\MSUpdates\LCU\$($Update.FullName) /norestart
+        Write-Host "Installing LCU"
+        Start-Process wusa.exe -ArgumentList 'C:\MSUpdates\LCU\$($Update.FullName) /quiet /norestart' -Wait
     }  
 
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
