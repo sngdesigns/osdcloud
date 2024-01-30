@@ -1,7 +1,7 @@
 #================================================================================================
-#   Date:       February 8, 2022
+#   Date:       January 30, 2024
 #   Purpose:    This script set the needed configuration to install the base image 
-#               for 21H2 and also install drivers and Windows updates to latest as needed.
+#               for Windows 11 22H2 and also install drivers and Windows updates to latest as needed.
 #================================================================================================
 
 #================================================================================================
@@ -161,4 +161,4 @@ Invoke-Exe reg unload HKLM\TempSYSTEM
 #   WinPE PostOS
 #   Restart Computer
 #================================================================================================
-#Restart-Computer
+Restart-Computer
