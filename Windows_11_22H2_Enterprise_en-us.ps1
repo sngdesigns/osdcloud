@@ -44,8 +44,10 @@ Function Install-MSUpdates{
         Write-Host "Expanding $Update"
         expand -f:* $Update.FullName .
         Write-Host "Installing LCU"
-        Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
-        Start-Sleep 10
+        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
+        #Start-Sleep 10
+        #Invoke-oobeUpdateWindows
     }  
 
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
