@@ -41,8 +41,8 @@ Function Install-MSUpdates{
     Set-Location -Path $LocationLCU
     foreach ($Update in $UpdatesLCU)
     {
-        Write-Host "Expanding $Update"
-        expand -f:* $Update.FullName .
+        #Write-Host "Expanding $Update"
+        #expand -f:* $Update.FullName .
         Write-Host "Installing LCU"
         Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
@@ -60,8 +60,8 @@ Function Install-MSUpdates{
     Set-Location -Path $LocationDotNet
     foreach ($Update in $UpdatesDotNet)
     {
-        Write-Host "Expanding $Update"
-        expand -f:* $Update.FullName .
+        #Write-Host "Expanding $Update"
+        #expand -f:* $Update.FullName .
     }  
 
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
@@ -90,6 +90,7 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
 # Download Windows 11 22H2 LCU - January 2024
+Write-Host "Downloading Latest Cumulative Update for Windows 11 22H2 - January 9, 2024"
 curl.exe -L -o "C:\MSupdates\LCU\Windows11-22H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a9f5de65-91c3-47e7-b987-0ba0468699b8/public/windows11.0-kb5034123-x64_d82c9af459245e90b5bf897f15a72cf810819f31.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
