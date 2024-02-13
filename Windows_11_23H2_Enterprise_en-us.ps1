@@ -43,7 +43,7 @@ Function Install-MSUpdates{
     {
         #Write-Host "Expanding $Update"
         #expand -f:* $Update.FullName .
-        Write-Host "Installing LCU"
+        Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
         Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
         #Start-Sleep 10
@@ -90,8 +90,8 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
 # Download Windows 11 22H2 LCU - January 2024
-Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - January 9, 2024"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-22H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/a9f5de65-91c3-47e7-b987-0ba0468699b8/public/windows11.0-kb5034123-x64_d82c9af459245e90b5bf897f15a72cf810819f31.msu"
+Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - February 13, 2024"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-22H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/bde66034-3c41-4fca-992a-54d476045855/public/windows11.0-kb5034765-x64_0b9338c4ace818aa52dbef7f674250aeb341f0f1.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
@@ -161,4 +161,4 @@ Invoke-Exe reg unload HKLM\TempSYSTEM
 #   WinPE PostOS
 #   Restart Computer
 #================================================================================================
-# Restart-Computer
+Restart-Computer
