@@ -131,7 +131,12 @@ $UnattendXml = @'
                     <Order>5</Order>
                     <Description>Remove Provisioning Package</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
-                </RunSynchronousCommand>            
+                </RunSynchronousCommand>    
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>6</Order>
+                    <Path>reg add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Policy" /v "VerifiedAndReputablePolicyState" /t REG_DWORD /d 0 /f</Path>
+                    <Description>Disable Smart App Control</Description>
+                </RunSynchronousCommand>                        
             </RunSynchronous>
         </component>
     </settings>    
@@ -157,9 +162,6 @@ Write-Verbose "Setting Unattend in Offline Registry"
 Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
 Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
 Invoke-Exe reg unload HKLM\TempSYSTEM
-
-Write-Verbose "Disabling Smart App Control"
-New-ItemProperty -LiteralPath "HKLM:\SYSTEM\CurrentControlSet\Control\CI\Policy" -Name "VerifiedAndReputablePolicyState" -Value 0 -PropertyType Dword -Force -EA SilentlyContinue | Out-Null
 
 #================================================================================================
 #   WinPE PostOS
