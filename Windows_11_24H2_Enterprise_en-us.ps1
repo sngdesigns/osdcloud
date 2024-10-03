@@ -139,7 +139,7 @@ $UnattendXml = @'
                 </RunSynchronousCommand>   
                 <RunSynchronousCommand wcm:action="add">
                     <Order>7</Order>
-                    <Path>reg add "HKCU\Control Panel\Desktop" /v Wallpaper /t REG_SZ /d "C:\Windows\WEB\Wallpaper\img0.jpg" /f</Path>
+                    <Path>reg add "HKEY_USERS\.DEFAULT\Control Panel\Desktop" /v Wallpaper /t REG_SZ /d "C:\Windows\WEB\Wallpaper\img0.jpg" /f</Path>
                     <Description>Set Desktop Wallpaper</Description>
                 </RunSynchronousCommand>                                                        
             </RunSynchronous>
