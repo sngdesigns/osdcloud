@@ -136,7 +136,12 @@ $UnattendXml = @'
                     <Order>6</Order>
                     <Path>reg add "HKLM\SYSTEM\CurrentControlSet\Control\CI\Policy" /v "VerifiedAndReputablePolicyState" /t REG_DWORD /d 0 /f</Path>
                     <Description>Disable Smart App Control</Description>
-                </RunSynchronousCommand>                        
+                </RunSynchronousCommand>   
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>7</Order>
+                    <Path>reg add "HKCU\Control Panel\Desktop" /v Wallpaper /t REG_SZ /d "C:\Windows\WEB\Wallpaper\img0.jpg" /f</Path>
+                    <Description>Set Desktop Wallpaper</Description>
+                </RunSynchronousCommand>                                                        
             </RunSynchronous>
         </component>
     </settings>    
