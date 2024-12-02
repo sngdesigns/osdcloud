@@ -80,7 +80,12 @@ New-Item "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main" -Force -EA S
 New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explorer\Main" -Name "DisableFirstRunCustomize" -Value 1 -PropertyType Dword -Force -EA SilentlyContinue | Out-Null
 
 #Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category DotNetCU -Latest -DestinationDirectory C:\MSUpdates\DotNet
-Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
+# Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 10" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
+
+New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
+
+Write-Host "Downloading Latest Cumulative Update for Windows 11 22H2 - Nov 12, 2024"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-22H2-LCU.msu" "https://catalog.s.download.windowsupdate.com/d/msdownload/update/software/secu/2024/11/windows10.0-kb5046613-x64_f6b774d0bfa6e59ea25a2285b6b822797f84f903.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
