@@ -45,7 +45,7 @@ Function Install-MSUpdates{
         #expand -f:* $Update.FullName .
         Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
         Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
-        #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-22H2-LCU.msu /quiet /norestart' -Wait
+        #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
         #Start-Sleep 10
         #Invoke-oobeUpdateWindows
     }  
@@ -115,6 +115,27 @@ $UnattendXml = @'
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>        
             </RunSynchronous>
+            <RunSynchronousCommand wcm:action="add">
+                <Order>2</Order>
+                <Description>Remove Windows Update Files</Description>
+                <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
+            </RunSynchronousCommand>
+            <RunSynchronousCommand wcm:action="add">
+                <Order>3</Order>
+                <Description>Remove OSDCloud Temp Files</Description>
+                <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
+            </RunSynchronousCommand>
+            <RunSynchronousCommand wcm:action="add">
+                <Order>4</Order>
+                <Description>Remove Drivers Temp Files</Description>
+                <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
+            </RunSynchronousCommand>         
+            <RunSynchronousCommand wcm:action="add">
+                <Order>5</Order>
+                <Description>Remove Provisioning Package</Description>
+                <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
+            </RunSynchronousCommand>            
+        </RunSynchronous>            
         </component>
     </settings>    
 </unattend>
