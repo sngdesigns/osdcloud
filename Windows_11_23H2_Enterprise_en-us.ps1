@@ -112,7 +112,7 @@ $UnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
                     <Description>OSDCloud Specialize</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
+                    <Path>#Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>2</Order>
@@ -127,17 +127,17 @@ $UnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>4</Order>
                     <Description>Remove OSDCloud Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
+                    <Path>#Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>5</Order>
                     <Description>Remove Drivers Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
+                    <Path>#Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
                 </RunSynchronousCommand>         
                 <RunSynchronousCommand wcm:action="add">
                     <Order>6</Order>
                     <Description>Remove Provisioning Package</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
+                    <Path>#Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
                 </RunSynchronousCommand>            
             </RunSynchronous>
         </component>
