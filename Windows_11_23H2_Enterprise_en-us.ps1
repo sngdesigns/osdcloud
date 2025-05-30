@@ -92,8 +92,8 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 # Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 10, 2024"
 # curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d2584a30-89ea-4236-af04-2585566deaa6/public/windows11.0-kb5048685-x64_f1967f623976c41d20deab623317c4855e9d111a.msu"
 
-Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - April 8, 2025"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/e7260780-684e-4b11-bc36-475b34268a6d/public/windows11.0-kb5055528-x64_ad405ca048652f0197920698a0aa4b9fcd13da43.msu"
+Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - May 13, 2025"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/34bc8dd6-10e7-49b4-bda7-007721dd4573/public/windows11.0-kb5058405-x64_117e45bc2ae1f33b5cfc1d105e06c15fef1feb5c.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
