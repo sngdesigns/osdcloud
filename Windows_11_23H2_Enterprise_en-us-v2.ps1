@@ -95,6 +95,21 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - July 8, 2025"
 curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/428ef120-29c6-4cfa-a7b9-9eb29cfc3a34/public/windows11.0-kb5062552-x64_085e5f2787c30de8a664d76bdac1fdd33de4fd75.msu"
 
+$product = Get-WmiObject Win32_ComputerSystemProduct
+$vendor = $product.Vendor
+if($vendor -like "Dell Inc."){
+    $model = $product.Name
+    if($model -eq "Dell Pro Max 16 MC16250"){
+        $driverpack = (Get-DellDriverPackCatalog | Where-Object {$_.Name -like "*Dell Pro Max 16 MC16250*Win11*"})
+        $driverpackurl = $driverpack.DriverPackUrl
+        $driverpackexe = $driverpack.FileName
+        Save-WebFile -SourceUrl $driverpackurl -DestinationDirectory C:\Drivers 
+
+        Start-Process C:\Drivers\$driverpackexe -ArgumentList "/s /e=C:\Drivers\MC16250" -Wait
+    }
+}
+
+
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
 
