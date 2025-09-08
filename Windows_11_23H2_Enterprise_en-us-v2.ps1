@@ -92,8 +92,8 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 # Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 10, 2024"
 # curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d2584a30-89ea-4236-af04-2585566deaa6/public/windows11.0-kb5048685-x64_f1967f623976c41d20deab623317c4855e9d111a.msu"
 
-Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Mar 11, 2025"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/cf6a62b9-4c7f-4703-aeb7-9ef0df5f29f1/public/windows11.0-kb5053602-x64_c1dc9c521f329ff91d92ab59713cb0f01959fa4e.msu"
+Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - July 8, 2025"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/428ef120-29c6-4cfa-a7b9-9eb29cfc3a34/public/windows11.0-kb5062552-x64_085e5f2787c30de8a664d76bdac1fdd33de4fd75.msu"
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
@@ -123,14 +123,9 @@ $UnattendXml = @'
                     <Order>3</Order>
                     <Description>Remove OSDCloud Temp Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
-                </RunSynchronousCommand>
+                </RunSynchronousCommand>    
                 <RunSynchronousCommand wcm:action="add">
                     <Order>4</Order>
-                    <Description>Remove Drivers Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
-                </RunSynchronousCommand>         
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>5</Order>
                     <Description>Remove Provisioning Package</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
                 </RunSynchronousCommand>            
