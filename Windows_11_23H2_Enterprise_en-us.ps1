@@ -92,8 +92,24 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 # Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 10, 2024"
 # curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d2584a30-89ea-4236-af04-2585566deaa6/public/windows11.0-kb5048685-x64_f1967f623976c41d20deab623317c4855e9d111a.msu"
 
-Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - July 8, 2025"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/428ef120-29c6-4cfa-a7b9-9eb29cfc3a34/public/windows11.0-kb5062552-x64_085e5f2787c30de8a664d76bdac1fdd33de4fd75.msu"
+Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - August 12, 2025"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/92262748-625f-4d74-9f63-975a05d63b0b/public/windows11.0-kb5063875-x64_9940f1ee9f1d127965dba841c8652267268fd73d.msu"
+
+$product = Get-WmiObject Win32_ComputerSystemProduct
+$vendor = $product.Vendor
+if($vendor -like "Dell Inc."){
+    $model = $product.Name
+    if($model -eq "Dell Pro Max 16 MC16250"){
+        $driverpack = (Get-DellDriverPackCatalog | Where-Object {$_.Name -like "*Dell Pro Max 16 MC16250*Win11*"})
+        $driverpackurl = $driverpack.DriverPackUrl
+        $driverpackexe = $driverpack.FileName
+        Write-Host "Downloading Dell Pro Max 16 MC16250 Driver Pack"
+        Save-WebFile -SourceUrl $driverpackurl -DestinationDirectory C:\Drivers 
+
+        Write-Host "Expanding the driver pack to C:\Drivers"
+        Start-Process C:\Drivers\$driverpackexe -ArgumentList "/s /e=C:\Drivers\MC16250" -Wait
+    }
+}
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
 Set-OSDCloudUnattendSpecialize
@@ -112,25 +128,30 @@ $UnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
                     <Description>Install Windows Update</Description>
+                    <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
+                </RunSynchronousCommand>  
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>2</Order>
+                    <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>        
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
+                    <Order>3</Order>
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>4</Order>
                     <Description>Remove OSDCloud Temp Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
                 </RunSynchronousCommand>
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
+                    <Order>5</Order>
                     <Description>Remove Drivers Temp Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
                 </RunSynchronousCommand>         
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>5</Order>
+                    <Order>6</Order>
                     <Description>Remove Provisioning Package</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
                 </RunSynchronousCommand>            
