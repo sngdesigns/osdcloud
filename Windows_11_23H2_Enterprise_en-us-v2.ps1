@@ -135,11 +135,6 @@ $UnattendXml = @'
                     <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>   
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Description>Install Windows Update</Description>
-                    <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
-                </RunSynchronousCommand>  
             </RunSynchronous>           
         </component>
     </settings>    
