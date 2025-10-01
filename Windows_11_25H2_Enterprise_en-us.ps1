@@ -157,7 +157,9 @@ $osadm64json = @'
 
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
 
-Start-OSDCloudWorkflow -CLI
+Start-Sleep -Seconds 5
+
+Start-OSDCloudWorkflow -CLI -Verbose
 
 #================================================================================================
 #   WinPE PostOS
