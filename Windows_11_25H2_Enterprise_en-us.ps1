@@ -23,14 +23,42 @@ $Global:OSBuild = "25H2"
 
 # Start-OSDCloud -OSBuild 23H2 -OSVersion 'Windows 11' -OSEdition Enterprise -Culture 'en-us' -SkipAutopilot -SkipODT -ZTI
 
-# Install-Module OSDCloud -Force
+$OSDCloudPath = Get-OSDCloudModulePath
 
-# $global:OSDCloudWorkflowSettingsUser.SkipClearDisk = $true
-# $global:OSDCloudWorkflowInit.OSActivation = 'Retail'
-# $global:OSDCloudWorkflowInit.OSEdition = 'Enterprise'
-# $global:OSDCloudWorkflowInit.OSEditionId = 'Enterprise'
-# $global:OSDCloudWorkflowInit.OSLanguage = "en-us"
-# $global:OSDCloudWorkflowInit.OSName = "Win11-25H2-amd64"
+$steppreinstallcleardisk = @'
+function step-preinstall-cleardisk {
+    [CmdletBinding()]
+    param (
+        # We should always confirm to Clear-Disk as this is destructive
+        [System.Boolean]
+        $Confirm = $true
+    )
+    #=================================================
+    # Start the step
+    $Message = "[$(Get-Date -format G)] [$($MyInvocation.MyCommand.Name)] Start"
+    Write-Debug -Message $Message; Write-Verbose -Message $Message
+
+    # Get the configuration of the step
+    $Step = $global:OSDCloudWorkflowCurrentStep
+    #=================================================
+    #region Main
+    # If Confirm is set to false, we need to check if there are multiple disks
+    if (($Confirm -eq $false) -and (($global:OSDCloudWorkflowInvokeSettings.GetDiskFixed | Measure-Object).Count -ge 2)) {
+        Write-Warning "[$(Get-Date -format G)] OSDCloud has detected more than 1 Fixed Disk is installed. Clear-Disk with Confirm is required"
+        $Confirm = $false
+    }
+
+    Clear-LocalDisk -Force -NoResults -Confirm:$Confirm -ErrorAction Stop
+    #endregion
+    #=================================================
+    # End the function
+    $Message = "[$(Get-Date -format G)] [$($MyInvocation.MyCommand.Name)] End"
+    Write-Verbose -Message $Message; Write-Debug -Message $Message
+    #=================================================
+}
+'@
+
+$steppreinstallcleardisk | Out-File -FilePath "$OSDCloudPath\private\steps\3-preinstall\step-preinstall-cleardisk.ps1" -Encoding ascii -Force
 
 $osadm64json = @'
 {
@@ -125,7 +153,7 @@ $osadm64json = @'
 }
 '@
 
-$OSDCloudPath = Get-OSDCloudModulePath
+
 
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
 
