@@ -23,15 +23,16 @@ $Global:OSBuild = "25H2"
 
 # Start-OSDCloud -OSBuild 23H2 -OSVersion 'Windows 11' -OSEdition Enterprise -Culture 'en-us' -SkipAutopilot -SkipODT -ZTI
 
-Install-Module OSDCloud -Force
+# Install-Module OSDCloud -Force
 
-$global:OSDCloudWorkflowInit.OSActivation = 'Retail'
-$global:OSDCloudWorkflowInit.OSEdition = 'Enterprise'
-$global:OSDCloudWorkflowInit.OSEditionId = 'Enterprise'
-$global:OSDCloudWorkflowInit.OSLanguage = "en-us"
-$global:OSDCloudWorkflowInit.OSName = "Win11-25H2-amd64"
+# $global:OSDCloudWorkflowSettingsUser.SkipClearDisk = $true
+# $global:OSDCloudWorkflowInit.OSActivation = 'Retail'
+# $global:OSDCloudWorkflowInit.OSEdition = 'Enterprise'
+# $global:OSDCloudWorkflowInit.OSEditionId = 'Enterprise'
+# $global:OSDCloudWorkflowInit.OSLanguage = "en-us"
+# $global:OSDCloudWorkflowInit.OSName = "Win11-25H2-amd64"
 
-Invoke-OSDCloudWorkflow
+Deploy-OSDCloud -CLI
 
 #================================================================================================
 #   WinPE PostOS
