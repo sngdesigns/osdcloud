@@ -25,6 +25,8 @@ $Global:OSBuild = "25H2"
 
 $OSDCloudPath = Get-OSDCloudModulePath
 
+Write-Host "OSDCloudPath = $OSDCloudPath"
+
 $steppreinstallcleardisk = @'
 function step-preinstall-cleardisk {
     [CmdletBinding()]
@@ -153,11 +155,9 @@ $osadm64json = @'
 }
 '@
 
-
-
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
 
-Deploy-OSDCloud -CLI
+Start-OSDCloudWorkflow -CLI
 
 #================================================================================================
 #   WinPE PostOS
