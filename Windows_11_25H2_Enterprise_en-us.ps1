@@ -153,13 +153,9 @@ $osadm64json = @'
 
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
 
-
 $OSDCloudPath = Get-OSDCloudModulePath
-Import-Module "$OSDCloudPath\OSDCloud.psm1"
 
 Write-Host "OSDCloudPath = $OSDCloudPath"
-
-Start-Sleep -Seconds 5
 
 Start-OSDCloudWorkflow -CLI -Verbose
 
