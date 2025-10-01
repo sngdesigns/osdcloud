@@ -50,7 +50,7 @@ function step-preinstall-cleardisk {
         $Confirm = $false
     }
 
-    Clear-LocalDisk -Force -NoResults -Confirm:$Confirm -ErrorAction Stop
+    Clear-LocalDisk -Force -NoResults -Confirm:$false -ErrorAction Stop
     #endregion
     #=================================================
     # End the function
