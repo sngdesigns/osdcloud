@@ -23,10 +23,6 @@ $Global:OSBuild = "25H2"
 
 # Start-OSDCloud -OSBuild 23H2 -OSVersion 'Windows 11' -OSEdition Enterprise -Culture 'en-us' -SkipAutopilot -SkipODT -ZTI
 
-$OSDCloudPath = Get-OSDCloudModulePath
-
-Write-Host "OSDCloudPath = $OSDCloudPath"
-
 $steppreinstallcleardisk = @'
 function step-preinstall-cleardisk {
     [CmdletBinding()]
@@ -156,6 +152,12 @@ $osadm64json = @'
 '@
 
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
+
+
+$OSDCloudPath = Get-OSDCloudModulePath
+Import-Module "$OSDCloudPath\OSDCloud.psm1"
+
+Write-Host "OSDCloudPath = $OSDCloudPath"
 
 Start-Sleep -Seconds 5
 
