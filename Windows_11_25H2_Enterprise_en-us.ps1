@@ -33,7 +33,7 @@ function step-preinstall-cleardisk {
     param (
         # We should always confirm to Clear-Disk as this is destructive
         [System.Boolean]
-        $Confirm = $true
+        $Confirm = $false
     )
     #=================================================
     # Start the step
@@ -47,7 +47,7 @@ function step-preinstall-cleardisk {
     # If Confirm is set to false, we need to check if there are multiple disks
     if (($Confirm -eq $false) -and (($global:OSDCloudWorkflowInvokeSettings.GetDiskFixed | Measure-Object).Count -ge 2)) {
         Write-Warning "[$(Get-Date -format G)] OSDCloud has detected more than 1 Fixed Disk is installed. Clear-Disk with Confirm is required"
-        $Confirm = $false
+        $Confirm = $true
     }
 
     Clear-LocalDisk -Force -NoResults -Confirm:$Confirm -ErrorAction Stop
