@@ -27,7 +27,7 @@ $OSDCloudPath = Get-OSDCloudModulePath
 
 Write-Host "OSDCloudPath = $OSDCloudPath"
 
-Start-OSDCloudWorkflow -CLI -Verbose
+# Start-OSDCloudWorkflow -CLI -Verbose
 
 $steppreinstallcleardisk = @'
 function step-preinstall-cleardisk {
