@@ -1,7 +1,7 @@
 #================================================================================================
 #   Date:       January 30, 2024
 #   Purpose:    This script set the needed configuration to install the base image 
-#               for Windows 11 22H2 and also install drivers and Windows updates to latest as needed.
+#               for Windows 11 25H2 and also install drivers and Windows updates to latest as needed.
 #================================================================================================
 
 #================================================================================================
@@ -24,10 +24,10 @@ $Global:OSBuild = "25H2"
 # Start-OSDCloud -OSBuild 23H2 -OSVersion 'Windows 11' -OSEdition Enterprise -Culture 'en-us' -SkipAutopilot -SkipODT -ZTI
 
 $OSDCloudPath = Get-OSDCloudModulePath
+Remove-Module OSDCloud -Force -ErrorAction SilentlyContinue
+Import-Module  "$OSDCloudPath\OSDCloud.psm1"
 
 Write-Host "OSDCloudPath = $OSDCloudPath"
-
-# Start-OSDCloudWorkflow -CLI -Verbose
 
 $steppreinstallcleardisk = @'
 function step-preinstall-cleardisk {
@@ -157,7 +157,11 @@ $osadm64json = @'
 }
 '@
 
+
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
+
+Start-OSDCloudWorkflow -CLI -Verbose
+
 
 #================================================================================================
 #   WinPE PostOS
