@@ -8,24 +8,8 @@
 #   Set Configuration
 #   DO NOT MODIFY BELOW UNLESS INSTRUCTED
 #================================================================================================
-$Global:OSBuild = "25H2"
-#$Global:OSDCloudUnattend = $true
-
-# $Params = @{
-#     OSBuild     = $Global:OSBuild
-#     OSEdition   = "Enterprise"
-#     OSVersion   = "Windows 11"
-#     Culture     = "en-us"
-#     SkipAutopilot = $true
-#     SkipODT     = $true
-#     ZTI         = $true
-# }
-
-# Start-OSDCloud -OSBuild 23H2 -OSVersion 'Windows 11' -OSEdition Enterprise -Culture 'en-us' -SkipAutopilot -SkipODT -ZTI
 
 $OSDCloudPath = Get-OSDCloudModulePath
-Remove-Module OSDCloud -Force -ErrorAction SilentlyContinue
-Import-Module  "$OSDCloudPath\OSDCloud.psm1"
 
 Write-Host "OSDCloudPath = $OSDCloudPath"
 
@@ -157,9 +141,13 @@ $osadm64json = @'
 }
 '@
 
-
 $osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
 
+# Remove and reimport module to due to configuration change after module is installed
+Remove-Module OSDCloud -Force -ErrorAction SilentlyContinue
+Import-Module  "$OSDCloudPath\OSDCloud.psm1"
+
+# Kickoff OSDCloudWorkflow
 Start-OSDCloudWorkflow -CLI -Verbose
 
 
@@ -232,9 +220,6 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 # Save-MsUpCatUpdate -Arch x64 -Build $Global:OSBuild -OS "Windows 11" -Category LCU -Latest -DestinationDirectory C:\MSUpdates\LCU
 
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
-
-# Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 10, 2024"
-# curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d2584a30-89ea-4236-af04-2585566deaa6/public/windows11.0-kb5048685-x64_f1967f623976c41d20deab623317c4855e9d111a.msu"
 
 # Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Sept 9, 2025"
 # curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/fd708457-087b-4903-826a-7db7c7439b68/public/windows11.0-kb5065431-x64_cfbf8bbd4938a7fb8a7aea5b3fc90e74e6bea6e4.msu"
