@@ -39,12 +39,16 @@ Function Install-MSUpdates{
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
     Set-Location -Path $LocationLCU
+
+    Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
+    Add-WindowsPackage -Online -PackagePath $LocationLCU -NoRestart -ErrorAction SilentlyContinue
+
     foreach ($Update in $UpdatesLCU)
     {
         #Write-Host "Expanding $Update"
         #expand -f:* $Update.FullName .
-        Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
+        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
         #Start-Sleep 10
         #Invoke-oobeUpdateWindows
@@ -89,8 +93,8 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
-Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Sept 9, 2025"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/fd708457-087b-4903-826a-7db7c7439b68/public/windows11.0-kb5065431-x64_cfbf8bbd4938a7fb8a7aea5b3fc90e74e6bea6e4.msu"
+Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 9, 2025"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7e819a39-0e82-4f80-bacb-71b3f6632f3d/public/windows11.0-kb5071417-x64_e19910906e0392876385744f955c05495a4fb16c.msu"
 
 $product = Get-WmiObject Win32_ComputerSystemProduct
 $vendor = $product.Vendor
