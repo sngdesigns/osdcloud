@@ -96,6 +96,7 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 Write-Host "Downloading Latest Cumulative Update for Windows 11 23H2 - Dec 9, 2025"
 curl.exe -L -o "C:\MSUpdates\LCU\Windows11-23H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/7e819a39-0e82-4f80-bacb-71b3f6632f3d/public/windows11.0-kb5071417-x64_e19910906e0392876385744f955c05495a4fb16c.msu"
 
+
 $product = Get-WmiObject Win32_ComputerSystemProduct
 $vendor = $product.Vendor
 if($vendor -like "Dell Inc."){
