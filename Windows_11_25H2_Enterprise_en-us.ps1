@@ -250,7 +250,7 @@ if($vendor -like "Dell Inc."){
 
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
-Set-OSDCloudUnattendSpecialize
+# Set-OSDCloudUnattendSpecialize
 
 #================================================================================================
 #   PostOS
@@ -283,21 +283,12 @@ $UnattendXml = @'
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
                 </RunSynchronousCommand>
+   
                 <RunSynchronousCommand wcm:action="add">
                     <Order>5</Order>
-                    <Description>Remove OSDCloud Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>6</Order>
-                    <Description>Remove Drivers Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
+                    <Description>Reboot Computer</Description>
+                    <Path>shutdown /r /t 0</Path>
                 </RunSynchronousCommand>         
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>7</Order>
-                    <Description>Remove Provisioning Package</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
-                </RunSynchronousCommand>            
             </RunSynchronous>             
         </component>
     </settings>    
@@ -306,17 +297,17 @@ $UnattendXml = @'
 #================================================================================================
 #   Set Unattend.xml
 #================================================================================================
-$PantherUnattendPath = 'C:\Windows\Panther'
-if (-NOT (Test-Path $PantherUnattendPath)) {
-    New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
-}
-$UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
-$UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
+# $PantherUnattendPath = 'C:\Windows\Panther'
+# if (-NOT (Test-Path $PantherUnattendPath)) {
+#     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
+# }
+# $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
+# $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
 
-Write-Verbose "Setting Unattend in Offline Registry"
-Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
-Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
-Invoke-Exe reg unload HKLM\TempSYSTEM
+# Write-Verbose "Setting Unattend in Offline Registry"
+# Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
+# Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
+# Invoke-Exe reg unload HKLM\TempSYSTEM
 
 #================================================================================================
 #   WinPE PostOS
