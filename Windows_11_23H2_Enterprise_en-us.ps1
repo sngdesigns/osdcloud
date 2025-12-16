@@ -45,10 +45,10 @@ Function Install-MSUpdates{
 
     foreach ($Update in $UpdatesLCU)
     {
-        Write-Host "Expanding $Update"
-        expand -f:* $Update.FullName .
-        Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        # Write-Host "Expanding $Update"
+        # expand -f:* $Update.FullName .
+        # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
+        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
         #Start-Sleep 10
         #Invoke-oobeUpdateWindows
