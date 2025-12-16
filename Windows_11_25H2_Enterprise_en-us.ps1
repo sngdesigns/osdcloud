@@ -263,7 +263,7 @@ if($vendor -like "Dell Inc."){
 
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
-# Set-OSDCloudUnattendSpecialize
+Set-OSDCloudUnattendSpecialize
 
 #================================================================================================
 #   PostOS
@@ -310,17 +310,17 @@ $UnattendXml = @'
 #================================================================================================
 #   Set Unattend.xml
 #================================================================================================
-# $PantherUnattendPath = 'C:\Windows\Panther'
-# if (-NOT (Test-Path $PantherUnattendPath)) {
-#     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
-# }
-# $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
-# $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
+$PantherUnattendPath = 'C:\Windows\Panther'
+if (-NOT (Test-Path $PantherUnattendPath)) {
+    New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
+}
+$UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
+$UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
 
-# Write-Verbose "Setting Unattend in Offline Registry"
-# Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
-# Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
-# Invoke-Exe reg unload HKLM\TempSYSTEM
+Write-Verbose "Setting Unattend in Offline Registry"
+Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
+Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
+Invoke-Exe reg unload HKLM\TempSYSTEM
 
 #================================================================================================
 #   WinPE PostOS
