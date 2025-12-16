@@ -38,17 +38,17 @@ Function Install-MSUpdates{
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
-    Set-Location -Path $LocationLCU
+    # Set-Location -Path $LocationLCU
 
-    Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-    Add-WindowsPackage -Online -PackagePath $LocationLCU -NoRestart -ErrorAction SilentlyContinue
+    # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
+    # Add-WindowsPackage -Online -PackagePath $LocationLCU -NoRestart -ErrorAction SilentlyContinue
 
     foreach ($Update in $UpdatesLCU)
     {
-        #Write-Host "Expanding $Update"
-        #expand -f:* $Update.FullName .
-        # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        Write-Host "Expanding $Update"
+        expand -f:* $Update.FullName .
+        Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
+        Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
         #Start-Sleep 10
         #Invoke-oobeUpdateWindows
@@ -58,7 +58,7 @@ Function Install-MSUpdates{
     foreach ($Update in $UpdatesLCU)
     {
         #Write-Host "Installing $Update"
-        #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }  
 
     Set-Location -Path $LocationDotNet
