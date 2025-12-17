@@ -277,22 +277,17 @@ $UnattendXml = @'
         <component name="Microsoft-Windows-Deployment" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
-					<Order>1</Order>
-					<Description>OSDCloud Specialize</Description>
-					<Path>Powershell -ExecutionPolicy Bypass -Command Invoke-OSDSpecialize -Verbose</Path>
-				</RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
+                    <Order>1</Order>
                     <Description>Install Windows Update</Description>
                     <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
                 </RunSynchronousCommand>  
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>2</Order>
                     <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>        
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
+                    <Order>3</Order>
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
                 </RunSynchronousCommand>
