@@ -296,12 +296,6 @@ $UnattendXml = @'
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
                 </RunSynchronousCommand>
-   
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>5</Order>
-                    <Description>Reboot Computer</Description>
-                    <Path>shutdown /r /t 0</Path>
-                </RunSynchronousCommand>         
             </RunSynchronous>             
         </component>
     </settings>    
