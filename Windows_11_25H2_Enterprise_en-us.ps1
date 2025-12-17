@@ -156,17 +156,6 @@ Start-OSDCloudWorkflow -CLI -Verbose
 #   Set Install-Updates.ps1
 #================================================================================================
 $SetCommand = @'
-Function Install-Driver{
-    $Manufacturer = (get-ciminstance -ClassName win32_bios).Manufacturer
-    if($Manufacturer -eq "LENOVO"){
-        $DriverFullPath = (Get-ChildItem C:\Windows\Temp\osdcloud-driverpack-download | Where-Object {$_.Name -like '*.exe' }).FullName
-        $DriverFullPath /SILENT /SUPPRESSMSGBOXES
-        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
-        pnpunattend.exe AuditSystem /L
-        reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
-    }
-}
-
 Function Install-MSUpdates{
     param (
         $LocationLCU = 'C:\MSUpdates\LCU',
