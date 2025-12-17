@@ -163,17 +163,6 @@ Function Install-MSUpdates{
         $LocationDotNet = 'C:\MSUpdates\DotNet'
     )
 
-    # Install Drivers
-    # $Manufacturer = (get-ciminstance -ClassName win32_bios).Manufacturer
-    # if($Manufacturer -eq "LENOVO"){
-    #     $DriverFullPath = (Get-ChildItem C:\Windows\Temp\osdcloud-driverpack-download | Where-Object {$_.Name -like '*.exe' }).FullName
-    #     $DriverFullPath /SILENT /SUPPRESSMSGBOXES
-    #     reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
-    #     pnpunattend.exe AuditSystem /L
-    #     reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
-    # }
-    # End Install Drivers
-
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
@@ -214,7 +203,16 @@ Function Install-MSUpdates{
         #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }     
 
-
+    # Install Drivers
+    $Manufacturer = (get-ciminstance -ClassName win32_bios).Manufacturer
+    if($Manufacturer -like "*LENOVO*"){
+        $DriverFullPath = (Get-ChildItem C:\Windows\Temp\osdcloud-driverpack-download | Where-Object {$_.Name -like '*.exe' }).FullName
+        $DriverFullPath /SILENT /SUPPRESSMSGBOXES
+        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
+        pnpunattend.exe AuditSystem /L
+        reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
+    }
+    # End Install Drivers    
 }
 
 #Install-Driver
