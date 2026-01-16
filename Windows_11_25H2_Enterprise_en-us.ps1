@@ -256,6 +256,17 @@ if($vendor -like "Dell Inc."){
         Write-Host "Expanding the driver pack to C:\Drivers"
         Start-Process C:\Drivers\$driverpackexe -ArgumentList "/s /e=C:\Drivers\MC16250" -Wait
     }
+}elseif($vendor -like "LENOVO"){
+    $driverpack = Get-MyDriverPack
+    $driverpackurl = $driverpack.Url
+    $driverpackexe = $driverpack.FileName
+    Write-Host "Downloading $($driverpack.Name)"
+    Save-WebFile -SourceUrl $driverpackurl -DestinationDirectory C:\Drivers 
+    Write-Host "Expanding the driver pack to C:\Drivers"
+    Start-Process C:\Drivers\$driverpackexe -ArgumentList "/SILENT /SUPPRESSMSGBOXES" -Wait
+    # reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
+    # pnpunattend.exe AuditSystem /L
+    # reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
 }
 
 
@@ -275,7 +286,7 @@ $UnattendXml = @'
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
-                    <Description>Install Windows Update</Description>
+                    <Description>Install Drivers</Description>
                     <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
                 </RunSynchronousCommand>  
                 <RunSynchronousCommand wcm:action="add">
