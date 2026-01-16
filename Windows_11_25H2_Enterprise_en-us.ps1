@@ -238,8 +238,8 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
-# Write-Host "Downloading Latest Cumulative Update for Windows 11 25H2 - Dec 9, 2025"
-curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/9d6e2b81-b755-4e68-af73-9f4ee41cd758/public/windows11.0-kb5072033-x64_a62291f0bad9123842bf15dcdd75d807d2a2c76a.msu"
+# Write-Host "Downloading Latest Cumulative Update for Windows 11 25H2 - Jan 13, 2026"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu"
 curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU2.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d8b7f92b-bd35-4b4c-96e5-46ce984b31e0/public/windows11.0-kb5043080-x64_953449672073f8fb99badb4cc6d5d7849b9c83e8.msu"
 
 $product = Get-WmiObject Win32_ComputerSystemProduct
