@@ -220,6 +220,8 @@ Install-MSUpdates
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
 
+
+
 #================================================================================================
 #   Create C:\Windows\Temp\osdcloud\SetupSpecialize.cmd
 #================================================================================================
@@ -256,22 +258,11 @@ if($vendor -like "Dell Inc."){
         Write-Host "Expanding the driver pack to C:\Drivers"
         Start-Process C:\Drivers\$driverpackexe -ArgumentList "/s /e=C:\Drivers\MC16250" -Wait
     }
-}elseif($vendor -like "LENOVO"){
-    $driverpack = Get-MyDriverPack
-    $driverpackurl = $driverpack.Url
-    $driverpackexe = $driverpack.FileName
-    Write-Host "Downloading $($driverpack.Name)"
-    Save-WebFile -SourceUrl $driverpackurl -DestinationDirectory C:\Drivers 
-    Write-Host "Expanding the driver pack to C:\Drivers"
-    Start-Process C:\Drivers\$driverpackexe -ArgumentList "/SILENT /SUPPRESSMSGBOXES" -Wait
-    # reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
-    # pnpunattend.exe AuditSystem /L
-    # reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
 }
 
 
 # Use old unattended method instead of Provisioning ppkg to install drivers
-Set-OSDCloudUnattendSpecialize
+# Set-OSDCloudUnattendSpecialize
 
 #================================================================================================
 #   PostOS
