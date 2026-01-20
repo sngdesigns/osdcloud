@@ -1,155 +1,27 @@
 #================================================================================================
 #   Date:       January 30, 2024
 #   Purpose:    This script set the needed configuration to install the base image 
-#               for Windows 11 25H2 and also install drivers and Windows updates to latest as needed.
+#               for Windows 11 22H2 and also install drivers and Windows updates to latest as needed.
 #================================================================================================
 
 #================================================================================================
 #   Set Configuration
 #   DO NOT MODIFY BELOW UNLESS INSTRUCTED
 #================================================================================================
+$Global:OSBuild = "25H2"
+#$Global:OSDCloudUnattend = $true
 
-$OSDCloudPath = Get-OSDCloudModulePath
-
-Write-Host "OSDCloudPath = $OSDCloudPath"
-
-$steppreinstallcleardisk = @'
-function step-preinstall-cleardisk {
-    [CmdletBinding()]
-    param (
-        # We should always confirm to Clear-Disk as this is destructive
-        [System.Boolean]
-        $Confirm = $false
-    )
-    #=================================================
-    # Start the step
-    $Message = "[$(Get-Date -format G)] [$($MyInvocation.MyCommand.Name)] Start"
-    Write-Debug -Message $Message; Write-Verbose -Message $Message
-
-    # Get the configuration of the step
-    $Step = $global:OSDCloudWorkflowCurrentStep
-    #=================================================
-    #region Main
-    # If Confirm is set to false, we need to check if there are multiple disks
-    if (($Confirm -eq $false) -and (($global:OSDCloudWorkflowInvokeSettings.GetDiskFixed | Measure-Object).Count -ge 2)) {
-        Write-Warning "[$(Get-Date -format G)] OSDCloud has detected more than 1 Fixed Disk is installed. Clear-Disk with Confirm is required"
-        $Confirm = $false
-    }
-
-    Clear-LocalDisk -Force -NoResults -Confirm:$false -ErrorAction Stop
-    #endregion
-    #=================================================
-    # End the function
-    $Message = "[$(Get-Date -format G)] [$($MyInvocation.MyCommand.Name)] End"
-    Write-Verbose -Message $Message; Write-Debug -Message $Message
-    #=================================================
+$Params = @{
+    OSBuild     = $Global:OSBuild
+    OSEdition   = "Enterprise"
+    OSVersion   = "Windows 11"
+    Culture     = "en-us"
+    SkipAutopilot = $true
+    SkipODT     = $true
+    ZTI         = $true
 }
-'@
 
-$steppreinstallcleardisk | Out-File -FilePath "$OSDCloudPath\private\steps\3-preinstall\step-preinstall-cleardisk.ps1" -Encoding ascii -Force
-
-$osadm64json = @'
-{
-    "OSActivation.default": "Volume",
-    "OSActivation.values": [
-        "Retail",
-        "Volume"
-    ],
-    "OSEdition.default": "Enterprise",
-    "OSEditionId.default": "Enterprise",
-    "OSEdition.values": [
-        {
-            "Edition": "Home",
-            "EditionId": "Core"
-        },
-        {
-            "Edition": "Home N",
-            "EditionId": "CoreN"
-        },
-        {
-            "Edition": "Education",
-            "EditionId": "Education"
-        },
-        {
-            "Edition": "Education N",
-            "EditionId": "EducationN"
-        },
-        {
-            "Edition": "Pro",
-            "EditionId": "Professional"
-        },
-        {
-            "Edition": "Pro N",
-            "EditionId": "ProfessionalN"
-        },
-        {
-            "Edition": "Enterprise",
-            "EditionId": "Enterprise"
-        },
-        {
-            "Edition": "Enterprise N",
-            "EditionId": "EnterpriseN"
-        }
-    ],
-    "OSLanguageCode.default": "en-us",
-    "OSLanguageCode.values": [
-        "ar-sa",
-        "bg-bg",
-        "cs-cz",
-        "da-dk",
-        "de-de",
-        "el-gr",
-        "en-gb",
-        "en-us",
-        "es-es",
-        "es-mx",
-        "et-ee",
-        "fi-fi",
-        "fr-ca",
-        "fr-fr",
-        "he-il",
-        "hr-hr",
-        "hu-hu",
-        "it-it",
-        "ja-jp",
-        "ko-kr",
-        "lt-lt",
-        "lv-lv",
-        "nb-no",
-        "nl-nl",
-        "pl-pl",
-        "pt-br",
-        "pt-pt",
-        "ro-ro",
-        "ru-ru",
-        "sk-sk",
-        "sl-si",
-        "sr-latn-rs",
-        "sv-se",
-        "th-th",
-        "tr-tr",
-        "uk-ua",
-        "zh-cn",
-        "zh-tw"
-    ],
-    "OSName.default": "Win11-25H2-amd64",
-    "OSName.values": [
-        "Win11-25H2-amd64",
-        "Win11-24H2-amd64",
-        "Win11-23H2-amd64"
-    ]
-}
-'@
-
-$osadm64json | Out-File -FilePath "$OSDCloudPath\workflow\default\os-amd64.json" -Encoding ascii -Force
-
-# Remove and reimport module to due to configuration change after module is installed
-Remove-Module OSDCloud -Force -ErrorAction SilentlyContinue
-Import-Module  "$OSDCloudPath\OSDCloud.psm1"
-
-# Kickoff OSDCloudWorkflow
-Start-OSDCloudWorkflow -CLI -Verbose
-
+Start-OSDCloud @Params
 
 #================================================================================================
 #   WinPE PostOS
@@ -166,15 +38,15 @@ Function Install-MSUpdates{
     $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
     $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.msu'} | Sort-Object {$_.LastWriteTime} )
 
-    Set-Location -Path $LocationLCU
+    # Set-Location -Path $LocationLCU
 
     Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-    Add-WindowsPackage -Online -PackagePath $LocationLCU -NoRestart -ErrorAction SilentlyContinue
+    Add-WindowsPackage -Online -PackagePath C:\MSUpdates\LCU -NoRestart -ErrorAction SilentlyContinue
 
     foreach ($Update in $UpdatesLCU)
     {
-        #Write-Host "Expanding $Update"
-        #expand -f:* $Update.FullName .
+        # Write-Host "Expanding $Update"
+        # expand -f:* $Update.FullName .
         # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
         # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
         #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
@@ -186,7 +58,7 @@ Function Install-MSUpdates{
     foreach ($Update in $UpdatesLCU)
     {
         #Write-Host "Installing $Update"
-        #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
+        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }  
 
     Set-Location -Path $LocationDotNet
@@ -202,30 +74,11 @@ Function Install-MSUpdates{
         #Write-Host "Installing $Update"
         #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
     }     
-
-    # Install Drivers
-    $Manufacturer = (get-ciminstance -ClassName win32_bios).Manufacturer
-    if($Manufacturer -like "*LENOVO*"){
-        $DriverFullPath = (Get-ChildItem C:\Windows\Temp\osdcloud-driverpack-download | Where-Object {$_.Name -like '*.exe' }).FullName
-        $DriverFullPath /SILENT /SUPPRESSMSGBOXES
-        reg add "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /t REG_SZ /d "C:\Drivers" /f
-        pnpunattend.exe AuditSystem /L
-        reg delete "HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\UnattendSettings\PnPUnattend\DriverPaths\1" /v Path /f
-    }
-    # End Install Drivers    
 }
 
-#Install-Driver
 Install-MSUpdates
 '@
 $SetCommand | Out-File -FilePath "C:\Windows\Install-Updates.ps1" -Encoding ascii -Force
-
-
-
-#================================================================================================
-#   Create C:\Windows\Temp\osdcloud\SetupSpecialize.cmd
-#================================================================================================
-# New-Item -Path "C:\Windows\Temp\osdcloud" -Name "SetupSpecialize.cmd" -ItemType File -Force
 
 #================================================================================================
 #   Download latest Windows update from Microsoft
@@ -244,6 +97,7 @@ New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu"
 curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU2.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d8b7f92b-bd35-4b4c-96e5-46ce984b31e0/public/windows11.0-kb5043080-x64_953449672073f8fb99badb4cc6d5d7849b9c83e8.msu"
 
+
 $product = Get-WmiObject Win32_ComputerSystemProduct
 $vendor = $product.Vendor
 if($vendor -like "Dell Inc."){
@@ -260,9 +114,8 @@ if($vendor -like "Dell Inc."){
     }
 }
 
-
 # Use old unattended method instead of Provisioning ppkg to install drivers
-# Set-OSDCloudUnattendSpecialize
+Set-OSDCloudUnattendSpecialize
 
 #================================================================================================
 #   PostOS
@@ -277,7 +130,7 @@ $UnattendXml = @'
             <RunSynchronous>
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
-                    <Description>Install Drivers</Description>
+                    <Description>Install Windows Update</Description>
                     <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
                 </RunSynchronousCommand>  
                 <RunSynchronousCommand wcm:action="add">
@@ -290,7 +143,22 @@ $UnattendXml = @'
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
                 </RunSynchronousCommand>
-            </RunSynchronous>             
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>4</Order>
+                    <Description>Remove OSDCloud Temp Files</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
+                </RunSynchronousCommand>
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>5</Order>
+                    <Description>Remove Drivers Temp Files</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
+                </RunSynchronousCommand>         
+                <RunSynchronousCommand wcm:action="add">
+                    <Order>6</Order>
+                    <Description>Remove Provisioning Package</Description>
+                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
+                </RunSynchronousCommand>            
+            </RunSynchronous>            
         </component>
     </settings>    
 </unattend>
@@ -298,17 +166,17 @@ $UnattendXml = @'
 #================================================================================================
 #   Set Unattend.xml
 #================================================================================================
-# $PantherUnattendPath = 'C:\Windows\Panther'
-# if (-NOT (Test-Path $PantherUnattendPath)) {
-#     New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
-# }
-# $UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
-# $UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
+$PantherUnattendPath = 'C:\Windows\Panther'
+if (-NOT (Test-Path $PantherUnattendPath)) {
+    New-Item -Path $PantherUnattendPath -ItemType Directory -Force | Out-Null
+}
+$UnattendPath = Join-Path $PantherUnattendPath 'Invoke-OSDSpecialize.xml'
+$UnattendXml | Out-File -FilePath $UnattendPath -Encoding utf8
 
-# Write-Verbose "Setting Unattend in Offline Registry"
-# Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
-# Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
-# Invoke-Exe reg unload HKLM\TempSYSTEM
+Write-Verbose "Setting Unattend in Offline Registry"
+Invoke-Exe reg load HKLM\TempSYSTEM "C:\Windows\System32\Config\SYSTEM"
+Invoke-Exe reg add HKLM\TempSYSTEM\Setup /v UnattendFile /d "C:\Windows\Panther\Invoke-OSDSpecialize.xml" /f
+Invoke-Exe reg unload HKLM\TempSYSTEM
 
 #================================================================================================
 #   WinPE PostOS
