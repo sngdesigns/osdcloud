@@ -1,7 +1,7 @@
 #================================================================================================
-#   Date:       January 30, 2024
+#   Date:       January 20, 2026
 #   Purpose:    This script set the needed configuration to install the base image 
-#               for Windows 11 22H2 and also install drivers and Windows updates to latest as needed.
+#               for Windows 11 25H2 and also install drivers and Windows updates to latest as needed.
 #================================================================================================
 
 #================================================================================================
@@ -41,39 +41,8 @@ Function Install-MSUpdates{
     # Set-Location -Path $LocationLCU
 
     Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-    Add-WindowsPackage -Online -PackagePath C:\MSUpdates\LCU -NoRestart -ErrorAction SilentlyContinue
-
-    foreach ($Update in $UpdatesLCU)
-    {
-        # Write-Host "Expanding $Update"
-        # expand -f:* $Update.FullName .
-        # Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
-        #Start-Process wusa.exe -ArgumentList 'C:\MSupdates\LCU\Windows11-23H2-LCU.msu /quiet /norestart' -Wait
-        #Start-Sleep 10
-        #Invoke-oobeUpdateWindows
-    }  
-
-    $UpdatesLCU = (Get-ChildItem $LocationLCU -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
-    foreach ($Update in $UpdatesLCU)
-    {
-        #Write-Host "Installing $Update"
-        # Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
-    }  
-
-    Set-Location -Path $LocationDotNet
-    foreach ($Update in $UpdatesDotNet)
-    {
-        #Write-Host "Expanding $Update"
-        #expand -f:* $Update.FullName .
-    }  
-
-    $UpdatesDotNet = (Get-ChildItem $LocationDotNet -ErrorAction SilentlyContinue | Where-Object {$_.Extension -eq '.cab'} | Sort-Object {$_.LastWriteTime} )
-    foreach ($Update in $UpdatesDotNet)
-    {
-        #Write-Host "Installing $Update"
-        #Add-WindowsPackage -Online -PackagePath $Update.FullName -NoRestart -ErrorAction SilentlyContinue
-    }     
+    Add-WindowsPackage -Online -PackagePath C:\MSUpdates\LCU -NoRestart -ErrorAction SilentlyContinue 
+    Restart-Computer
 }
 
 Install-MSUpdates
