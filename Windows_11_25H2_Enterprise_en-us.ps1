@@ -41,8 +41,8 @@ Function Install-MSUpdates{
     # Set-Location -Path $LocationLCU
 
     Write-Host "Installing Latest Cumulative Update - please wait while it finish installing"
-    #Add-WindowsPackage -Online -PackagePath C:\MSUpdates\LCU -NoRestart -ErrorAction SilentlyContinue 
-    #Restart-Computer
+    Add-WindowsPackage -Online -PackagePath C:\MSUpdates\LCU -NoRestart -ErrorAction SilentlyContinue 
+    Restart-Computer
 }
 
 Install-MSUpdates
@@ -63,8 +63,8 @@ New-ItemProperty -LiteralPath "HKLM:\Software\Policies\Microsoft\Internet Explor
 New-Item "C:\MSUpdates\LCU" -ItemType Directory -Force
 
 # Write-Host "Downloading Latest Cumulative Update for Windows 11 25H2 - Jan 13, 2026"
-#curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu"
-#curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU2.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d8b7f92b-bd35-4b4c-96e5-46ce984b31e0/public/windows11.0-kb5043080-x64_953449672073f8fb99badb4cc6d5d7849b9c83e8.msu"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/b7aa64b3-8441-4d36-b8f7-409f3cfeac1c/public/windows11.0-kb5074109-x64_fe29a336e6e650dda4038e82bcc0c6286c70b9a1.msu"
+curl.exe -L -o "C:\MSupdates\LCU\Windows11-25H2-LCU2.msu" "https://catalog.sf.dl.delivery.mp.microsoft.com/filestreamingservice/files/d8b7f92b-bd35-4b4c-96e5-46ce984b31e0/public/windows11.0-kb5043080-x64_953449672073f8fb99badb4cc6d5d7849b9c83e8.msu"
 
 
 $product = Get-WmiObject Win32_ComputerSystemProduct
@@ -100,33 +100,13 @@ $UnattendXml = @'
                 <RunSynchronousCommand wcm:action="add">
                     <Order>1</Order>
                     <Description>Install Windows Update</Description>
-                    <Path>pnputil /add-driver C:\Drivers\*.inf /subdirs /install</Path>
-                </RunSynchronousCommand>  
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>2</Order>
-                    <Description>Install Windows Update</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -File C:\Windows\Install-Updates.ps1</Path>
                 </RunSynchronousCommand>        
                 <RunSynchronousCommand wcm:action="add">
-                    <Order>3</Order>
+                    <Order>2</Order>
                     <Description>Remove Windows Update Files</Description>
                     <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\MSUpdates -Recurse</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>4</Order>
-                    <Description>Remove OSDCloud Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\OSDCloud -Recurse</Path>
-                </RunSynchronousCommand>
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>5</Order>
-                    <Description>Remove Drivers Temp Files</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Drivers -Recurse</Path>
-                </RunSynchronousCommand>         
-                <RunSynchronousCommand wcm:action="add">
-                    <Order>6</Order>
-                    <Description>Remove Provisioning Package</Description>
-                    <Path>Powershell -ExecutionPolicy Bypass -Command Remove-Item -Path C:\Recovery -Recurse</Path>
-                </RunSynchronousCommand>            
+                </RunSynchronousCommand>        
             </RunSynchronous>            
         </component>
     </settings>    
